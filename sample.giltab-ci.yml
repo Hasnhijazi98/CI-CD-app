@@ -1,0 +1,52 @@
+image: node
+
+stages:
+ - buildMyApp
+ - tests
+ - deploy
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+build website:
+  stage: buildMyApp
+  script:
+    - npm install
+    - npm install -g gatsby-cli
+    - gatsby build
+  artifacts:
+   paths:
+    - ./public
+
+test website:
+  stage: tests
+  image: alpine
+  script:
+   - grep "gatsby" ./public/index.html
+  cache: [] # Disable cache for this job
+
+
+test website 2 :
+  stage: tests
+  script:
+   - npm install
+   - npm install -g gatsby-cli
+   - gatsby serve &
+
+# normally creating job templates anchors like here is useful when having a portion of code that is repeated in many places, having
+# different values, and using $VARIABLES inside the primary jobs to assign values to a specific variable according to the job goals
+.deploy-template : &deploy
+  only:
+    - master
+  script:
+    - npm install --global surge
+    - surge --project ./public --domain a77a123.surge.sh
+  environment:
+    name: deploy stage
+    url: https://my-website-3aw.surge.sh/
+
+deploy app :
+  <<: *deploy
+  stage: deploy
