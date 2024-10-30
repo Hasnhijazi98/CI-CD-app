@@ -6,6 +6,8 @@
 *******************GITLAB CI/CD DEVOPS*************************
 ***************************************************************
 
+// u can find the gitlab pipeline code in the sample.gitlab-ci.yml file
+
 
 first of all, you need a gitlab account, so create one
 
